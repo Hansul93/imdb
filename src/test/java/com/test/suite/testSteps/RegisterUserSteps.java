@@ -22,7 +22,7 @@ public class RegisterUserSteps {
 
 	@Step
 	public void setEmailId(String emailValue) {
-		Serenity.recordReportData().withTitle("List of Shows").andContents(registerUserPage.setEmailId(emailValue));
+		Serenity.recordReportData().withTitle("Registered Email").andContents(registerUserPage.setEmailId(emailValue));
 		registerUserPage.setEmailId(emailValue); 
 	}
 
