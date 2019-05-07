@@ -18,6 +18,7 @@ Feature: Register New User
     Then Click on Continue button
     Then Click on profile dropdown
     And Click on logout option
+    Then Verify the logged out state of the user
 
   @Register
   Scenario: TC_04 Sign with registered user, login and logout
@@ -29,3 +30,4 @@ Feature: Register New User
     Then click on Submit button
     Then Click on profile dropdown
     And Click on logout option
+    Then Verify the logged out state of the user

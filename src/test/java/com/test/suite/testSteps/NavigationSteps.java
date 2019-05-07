@@ -21,9 +21,14 @@ public class NavigationSteps {
 	public void setSubMenuTopRatedTVShows() {
 		navigationPage.setSubMenuTopRatedTVShows();
 	}
-	
+
 	@Step
 	public void signIn() {
 		navigationPage.signIn();
+	}
+
+	@Step
+	public void switchToMainWindow() {
+		navigationPage.parentWindow();
 	}
 }

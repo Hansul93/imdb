@@ -5,21 +5,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import com.imdb.utils.CommonMethods;
+
+import net.serenitybdd.core.annotations.findby.By;
 import net.serenitybdd.core.annotations.findby.FindBy;
 
 public class RegisterUserPage extends CommonMethods {
 
-	String emailDomain;
+	String emailDomain, logoutURL;
 
 	public RegisterUserPage(WebDriver driver) {
 		super(driver);
 		Properties prop = new Properties();
 		try {
-			prop.load(new FileInputStream(new File("./config.properties")));
+			prop.load(new FileInputStream(new File("config.properties")));
 			emailDomain = prop.getProperty("EmailDomain");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -31,6 +35,8 @@ public class RegisterUserPage extends CommonMethods {
 	static long number = (long) Math.floor(Math.random() * 900000000L) + 10000000L;
 	static String random = Long.toString(number);
 	public static String emailId = random;
+
+	private String LOGIN_CONSTANT = "imdb-signin-link";
 
 	@FindBy(css = ".create-account")
 
@@ -56,9 +62,9 @@ public class RegisterUserPage extends CommonMethods {
 
 	private WebElement continueButton;
 
-	@FindBy(css = ".a-link-emphasis")
+	@FindBy(css = "imdb-signin-link")
 
-	private WebElement signIn;
+	private By signIn;
 
 	@FindBy(css = "span.a-button-inner > input")
 
@@ -76,6 +82,16 @@ public class RegisterUserPage extends CommonMethods {
 
 	private WebElement signInWithIMDB;
 
+	// Made an assumption that this would be the element identification.
+	// Couldn't identify precisely since the page refreshed
+	@FindBy(xpath = "//*[contains(text(),'Logging Out')]")
+
+	private WebElement loggingOut;
+
+	@FindBy(xpath = "//*[contains(text(),'Page will refresh')]")
+
+	private WebElement pageRefreshMessage;
+
 	public void createAccount() {
 		clickElement(createAccount);
 	}
@@ -85,9 +101,9 @@ public class RegisterUserPage extends CommonMethods {
 	}
 
 	public String setEmailId(String emailValue) {
-		System.out.println("Email ID: " + emailValue + emailId + emailDomain);
-		typeInto(email, emailValue + emailId + emailDomain);
-		return emailValue + emailId + emailDomain;
+		System.out.println(emailValue);
+		typeInto(email, emailValue);
+		return emailValue;
 	}
 
 	public void setPassword(String passwordValue) {
@@ -100,10 +116,6 @@ public class RegisterUserPage extends CommonMethods {
 
 	public void continueButton() {
 		clickElement(continueButton);
-	}
-
-	public void signIn() {
-		clickElement(signIn);
 	}
 
 	public void signInSubmit() {
@@ -121,8 +133,13 @@ public class RegisterUserPage extends CommonMethods {
 	public void signInWithIMDB() {
 		clickElement(signInWithIMDB);
 	}
-	
+
 	public void completeRegistrationTitle(String expectedTitle) {
 		titlePartialMatch(expectedTitle);
+	}
+
+	public void verifyLogoutState() {
+		WebDriverWait wait = new WebDriverWait(getDriver(), 20);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(LOGIN_CONSTANT)));
 	}
 }

@@ -1,6 +1,13 @@
 package com.test.suite.stepDefinitions;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
+
+import com.imdb.utils.EmailGenerator;
 import com.imdb.utils.ExcelReader;
 import com.test.suite.testSteps.RegisterUserSteps;
 import cucumber.api.DataTable;
@@ -9,6 +16,10 @@ import cucumber.api.java.en.Then;
 import net.thucydides.core.annotations.Steps;
 
 public class RegisterUserStepDefs {
+	String emailDomain;
+	static long number = (long) Math.floor(Math.random() * 900000000L) + 10000000L;
+	static String random = Long.toString(number);
+	public static String emailId = random;
 
 	@Steps
 	RegisterUserSteps registerUserSteps;
@@ -33,24 +44,28 @@ public class RegisterUserStepDefs {
 		registerUserSteps.continueButton();
 	}
 
-	@Then("^Click on Sign In link$")
-	public void signInLink() {
-		registerUserSteps.signIn();
-	}
-
 	@Then("^click on Submit button$")
 	public void submitButton() {
 		registerUserSteps.signInSubmit();
 	}
 
 	private void setUserDetails(String field, String value) {
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File("config.properties")));
+			emailDomain = prop.getProperty("EmailDomain");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		switch (field) {
 		case "Customer Name":
 			registerUserSteps.setCustomerName(value);
 			break;
 
 		case "Email Address":
-			registerUserSteps.setEmailId(value);
+			registerUserSteps.setEmailId(value + emailId + emailDomain);
 			break;
 
 		case "Password":
@@ -82,27 +97,24 @@ public class RegisterUserStepDefs {
 	@Given("^Fill in the following user details: \"([^\"]*)\"$")
 	public void userDetails_CreateAccount(String field) {
 		try {
-			ExcelReader.setExcelFile("./data/userdata.xlsx", "UserDetails");
+			ExcelReader.setExcelFile("UserDetails");
 			if (field.equals("Create Account")) {
 				registerUserSteps.setCustomerName(ExcelReader.getCellData(1, 0));
-				registerUserSteps.setEmailId(ExcelReader.getCellData(1, 1));
-				registerUserSteps.setPassword(ExcelReader.getCellData(1, 2));
+				setEmailIdPassword();
 				registerUserSteps.setConfirmPassword(ExcelReader.getCellData(1, 3));
 
 			} else if (field.equals("Sign In")) {
-				registerUserSteps.setEmailId(ExcelReader.getCellData(1, 1));
-				registerUserSteps.setPassword(ExcelReader.getCellData(1, 2));
+				setEmailIdPassword();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Given("^Launch the email service provider with email address$")
+	@Given("^Launch the email service provider$")
 	public void launchServiceProvider() {
 		try {
-			ExcelReader.setExcelFile("./data/userdata.xlsx", "UserDetails");
-			registerUserSteps.launchEmailServiceProvider(ExcelReader.getCellData(1, 1));
+			registerUserSteps.launchEmailServiceProvider();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,13 +125,42 @@ public class RegisterUserStepDefs {
 		registerUserSteps.emailSubject();
 	}
 
+	@Then("^Verify email with mail service provider$")
+	public void emailConfirmation() {
+		registerUserSteps.emailConfirmation();
+	}
+
 	@Then("^Click on account activation link$")
 	public void activateAccount() {
 		registerUserSteps.activateAccount();
 	}
 
-	@Then("^Verifyt the title \"([^\"]*)\"$")
+	@Then("^Verify the title \"([^\"]*)\"$")
 	public void assertPageNavigation(String expectedText) {
 		registerUserSteps.completeRegistrationTitle(expectedText);
+	}
+
+	@Then("^Verify the logged out state of the user$")
+	public void verifyLogoutState() {
+		registerUserSteps.verifyLogoutState();
+	}
+
+	@Then("^Open the mail box of service provider$")
+	public void openMailBox() {
+		registerUserSteps.openMailBox();
+	}
+
+	@Then("^Login to the email service provider$")
+	public void loginToServiceProvider() {
+		registerUserSteps.loginToServiceProvider(EmailGenerator.imapUserNameDetail, EmailGenerator.imapPasswordDetail);
+	}
+
+	private void setEmailIdPassword() {
+		try {
+			registerUserSteps.setEmailId(EmailGenerator.imapUserNameDetail);
+			registerUserSteps.setPassword(ExcelReader.getCellData(1, 2));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

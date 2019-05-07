@@ -1,5 +1,8 @@
 package com.imdb.utils;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -81,4 +84,29 @@ public class CommonMethods extends PageObject {
 		}
 	}
 
+	/**
+	 * To get the text of an element
+	 * @param element
+	 * @return
+	 */
+	public String returnText(WebElement element) {
+		String text = element.getText();
+		return text;
+	}
+
+	/**
+	 * To switch to the current window
+	 */
+	public void switchToMainWindow() {
+		String mainWindow = getDriver().getWindowHandle();
+		Set<String> set = getDriver().getWindowHandles();
+		Iterator<String> itr = set.iterator();
+		while (itr.hasNext()) {
+			String childWindow = itr.next();
+			if (!mainWindow.equals(childWindow)) {
+				getDriver().switchTo().window(childWindow);
+				System.out.println(getDriver().switchTo().window(childWindow).getTitle());
+			}
+		}
+	}
 }

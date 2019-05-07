@@ -27,9 +27,14 @@ public class NavigationStepDefs {
 			navigationSteps.setSubMenuTopRatedTVShows();
 		}
 	}
-	
+
 	@Then("^Click on Sign In button$")
 	public void signInButton() {
 		navigationSteps.signIn();
+	}
+
+	@Then("^Switch to parent window$")
+	public void parentWindow() {
+		navigationSteps.switchToMainWindow();
 	}
 }

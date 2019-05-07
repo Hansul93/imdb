@@ -20,7 +20,7 @@ public class NavigationPage extends CommonMethods {
 		super(driver);
 		Properties prop = new Properties();
 		try {
-			prop.load(new FileInputStream(new File("./config.properties")));
+			prop.load(new FileInputStream(new File("config.properties")));
 			aURL = prop.getProperty("ApplcationURL");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -63,5 +63,9 @@ public class NavigationPage extends CommonMethods {
 
 	public void signIn() {
 		clickElement(signIn);
+	}
+	
+	public void parentWindow() {
+		switchToMainWindow();
 	}
 }

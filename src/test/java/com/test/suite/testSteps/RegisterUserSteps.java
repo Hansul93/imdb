@@ -1,14 +1,15 @@
 package com.test.suite.testSteps;
 
 import com.imdb.pages.RegisterUserPage;
-import com.imdb.utils.EmailReader;
+import com.imdb.utils.EmailGenerator;
+import com.imdb.utils.EmailVerification;
 
 import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Step;
 
 public class RegisterUserSteps {
 	RegisterUserPage registerUserPage;
-	EmailReader emailReader;
+	EmailGenerator emailGenerator;
 
 	@Step
 	public void createAccount() {
@@ -23,7 +24,7 @@ public class RegisterUserSteps {
 	@Step
 	public void setEmailId(String emailValue) {
 		Serenity.recordReportData().withTitle("Registered Email").andContents(registerUserPage.setEmailId(emailValue));
-		registerUserPage.setEmailId(emailValue); 
+		registerUserPage.setEmailId(emailValue);
 	}
 
 	@Step
@@ -39,11 +40,6 @@ public class RegisterUserSteps {
 	@Step
 	public void continueButton() {
 		registerUserPage.continueButton();
-	}
-
-	@Step
-	public void signIn() {
-		registerUserPage.signIn();
 	}
 
 	@Step
@@ -67,22 +63,42 @@ public class RegisterUserSteps {
 	}
 
 	@Step
-	public void launchEmailServiceProvider(String userId) {
-		emailReader.launchEmailServiceProvider(userId);
+	public void launchEmailServiceProvider() {
+		emailGenerator.launchEmailServiceProvider();
 	}
 
 	@Step
 	public void emailSubject() {
-		emailReader.emailSubject();
+		emailGenerator.emailSubject();
 	}
 
 	@Step
 	public void activateAccount() {
-		emailReader.activateAccount();
+		emailGenerator.activateAccount();
+	}
+
+	@Step
+	public void openMailBox() {
+		emailGenerator.openMailBox();
+	}
+
+	@Step
+	public void loginToServiceProvider(String emailValue, String passwordValue) {
+		emailGenerator.loginToServiceProvider(emailValue, passwordValue);
 	}
 
 	@Step
 	public void completeRegistrationTitle(String expectedTitle) {
 		registerUserPage.completeRegistrationTitle(expectedTitle);
+	}
+
+	@Step
+	public void verifyLogoutState() {
+		registerUserPage.verifyLogoutState();
+	}
+
+	@Step
+	public void emailConfirmation() {
+		EmailVerification.verifyEmail();
 	}
 }
