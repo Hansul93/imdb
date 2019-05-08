@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
 import net.serenitybdd.core.annotations.findby.FindBy;
 
 public class EmailGenerator extends CommonMethods {
@@ -92,16 +91,7 @@ public class EmailGenerator extends CommonMethods {
 		imapPasswordDetail = returnText(imapPassword);
 		getDriver().manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		clickElement(openMailBox);
-		String mainWindow = getDriver().getWindowHandle();
-		Set<String> set = getDriver().getWindowHandles();
-		Iterator<String> itr = set.iterator();
-		while (itr.hasNext()) {
-			String childWindow = itr.next();
-			if (!mainWindow.equals(childWindow)) {
-				getDriver().switchTo().window(childWindow);
-				System.out.println(getDriver().switchTo().window(childWindow).getTitle());
-			}
-		}
+		switchToMainWindow();
 	}
 
 	public void openMailBox() {
@@ -120,6 +110,7 @@ public class EmailGenerator extends CommonMethods {
 	}
 
 	public void activateAccount() {
+		getDriver().switchTo().frame(0);
 		clickElement(activateAccount);
 	}
 }
